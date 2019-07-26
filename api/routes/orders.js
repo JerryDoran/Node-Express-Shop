@@ -8,13 +8,18 @@ router.get('/', (req, res, next) => {
   });
 });
 
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
+  const order = {
+    productId: req.body.productId,
+    quantity: req.body.quantity
+  };
   res.status(201).json({
-    message: 'Order was created'
+    message: 'Order was created',
+    order: order
   });
 });
 
-router.get('/:orderId', (req, res) => {
+router.get('/:orderId', (req, res, next) => {
   const id = req.params.orderId;
   if (id === 'special') {
     res.status(200).json({
@@ -27,7 +32,7 @@ router.get('/:orderId', (req, res) => {
   }
 });
 
-router.delete('/:productId', (req, res) => {
+router.delete('/:productId', (req, res, next) => {
   const id = req.params.productId;
   res.status(200).json({
     message: `You deleted the order with id ${id}`
