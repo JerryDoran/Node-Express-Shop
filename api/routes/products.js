@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 
 // SET UP THE PRODUCTS ROUTES
+// THIS ROUTE '/' IMPLIES '/PRODUCTS'
 router.get('/', (req, res, next) => {
   res.status(200).json({
     message: 'Handling GET requests to /products'
   });
 });
 
+// THIS ROUTE '/' IMPLIES '/PRODUCTS'
 router.post('/', (req, res, next) => {
   const product = {
     name: req.body.name,

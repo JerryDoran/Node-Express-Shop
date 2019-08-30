@@ -29,7 +29,7 @@ app.use('/products', require('./api/routes/products'));
 app.use('/orders', require('./api/routes/orders'));
 
 // ERROR HANDLING MIDDLEWARE
-/* Will reach this code only if there is no matching route that was requested*/
+/* Will reach this code only if there is no matching route that was requested */
 app.use((req, res, next) => {
   const error = new Error('Not found');
   error.status = 404;
