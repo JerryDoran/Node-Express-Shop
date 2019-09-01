@@ -2,6 +2,16 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+mongoose.connect(
+  'mongodb+srv://admin-jerry:' +
+    process.env.MONGO_PWD +
+    '@cluster0-yclv3.mongodb.net/test?retryWrites=true&w=majority',
+  {
+    useMongoClient: true
+  }
+);
 
 // MIDDLEWARE
 app.use(morgan('dev'));
