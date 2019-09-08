@@ -88,7 +88,7 @@ router.get('/:productId', (req, res, next) => {
           product: doc,
           request: {
             type: 'GET',
-            description: 'Get all products',
+            description: `Got the product with id: ${id}`,
             url: 'http://localhost:3000/products/'
           }
         });
@@ -125,7 +125,13 @@ router.patch('/:productId', (req, res, next) => {
     .exec()
     .then(result => {
       console.log(result);
-      res.status(200).json(result);
+      res.status(200).json({
+        message: 'Product information updated',
+        request: {
+          type: 'GET',
+          url: 'http//localhost:3000/products/' + id
+        }
+      });
     })
     .catch(err => {
       console.log(err);
@@ -146,10 +152,17 @@ router.patch('/:productId', (req, res, next) => {
 
 router.delete('/:productId', (req, res, next) => {
   const id = req.params.productId;
-  Product.remove({ _id: id })
+  Product.deleteOne({ _id: id })
     .exec()
     .then(result => {
-      res.status(200).json(result);
+      res.status(200).json({
+        message: 'Product deleted',
+        request: {
+          type: 'POST',
+          url: 'http//localhost:3000/products',
+          body: { name: 'String', price: 'Number' }
+        }
+      });
     })
     .catch(err => {
       console.log(err);

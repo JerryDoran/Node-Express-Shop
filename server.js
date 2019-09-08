@@ -13,6 +13,9 @@ mongoose.connect(
   }
 );
 
+// GET RID OF DEPRECATION WARNINGS
+mongoose.Promise = global.Promise;
+
 // MIDDLEWARE
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
