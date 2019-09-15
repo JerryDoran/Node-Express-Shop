@@ -6,9 +6,14 @@ const Order = require('../models/order');
 const Product = require('../models/product');
 
 // SET UP THE ORDERS ROUTES
+
+// Handling incoming GET requests to /orders
 router.get('/', (req, res, next) => {
   Order.find()
     .select('product quantity _id')
+
+    // Get product information along with order information
+    .populate('product', 'name')
     .exec()
     .then(docs => {
       res.status(200).json({
@@ -33,6 +38,7 @@ router.get('/', (req, res, next) => {
     });
 });
 
+// Handling incoming POST requests to /orders
 router.post('/', (req, res, next) => {
   // Validation for creating orders using products that we do not have in the database
   Product.findById(req.body.productId)
@@ -43,10 +49,17 @@ router.post('/', (req, res, next) => {
         });
       }
       const order = new Order({
+        // Creates the Id for each order that is stored
         _id: mongoose.Types.ObjectId(),
+
+        // Comes from the body of the json
         quantity: req.body.quantity,
+
+        // Comes from the body of the json
         product: req.body.productId
       });
+
+      // Saves the order to the database
       return order.save();
     })
     .then(result => {
@@ -72,8 +85,10 @@ router.post('/', (req, res, next) => {
     });
 });
 
+// Handling incoming GET requests to /orders/? with a specific id targeted
 router.get('/:orderId', (req, res, next) => {
   Order.findById(req.params.orderId)
+    .populate('product')
     .exec()
     .then(order => {
       if (!order) {
