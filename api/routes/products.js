@@ -2,12 +2,41 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/product');
 const mongoose = require('mongoose');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, './uploads/');
+  },
+  filename: function(req, file, cb) {
+    cb(null, new Date().toISOString() + file.originalname);
+  }
+});
+
+// Can also filter files by type
+const fileFilter = (req, file, cb) => {
+  // Reject file
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+// Initialize multer and store all files in the 'uploads folder' which will be static
+const upload = multer({
+  storage: storage,
+  limits: {
+    // Limit file size to 5mb
+    fileSize: 1024 * 1024 * 5
+  },
+  fileFilter: fileFilter
+});
 
 // SET UP THE PRODUCTS ROUTES
 // THIS ROUTE '/' IMPLIES '/PRODUCTS'
 router.get('/', (req, res, next) => {
   Product.find()
-    .select('name price _id')
+    .select('name price _id productImage')
     .exec()
     .then(docs => {
       const response = {
@@ -16,6 +45,7 @@ router.get('/', (req, res, next) => {
           return {
             name: doc.name,
             price: doc.price,
+            productImage: doc.productImage,
             _id: doc._id,
             request: {
               type: 'GET',
@@ -44,13 +74,16 @@ router.get('/', (req, res, next) => {
 });
 
 // THIS ROUTE '/' IMPLIES '/PRODUCTS'
-router.post('/', (req, res, next) => {
+router.post('/', upload.single('productImage'), (req, res, next) => {
   // Create new instance of the Product Model
   const product = new Product({
     // This will create a new Id for the record to be stored on Mongo
     _id: new mongoose.Types.ObjectId(),
+
+    // This will just parse bodies that are url encoded and json data
     name: req.body.name,
-    price: req.body.price
+    price: req.body.price,
+    productImage: req.file.path
   });
 
   product
@@ -79,7 +112,7 @@ router.post('/', (req, res, next) => {
 router.get('/:productId', (req, res, next) => {
   const id = req.params.productId;
   Product.findById(id)
-    .select('name price _id')
+    .select('name price _id productImage')
     .exec()
     .then(doc => {
       console.log('From database', doc);

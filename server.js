@@ -18,6 +18,7 @@ mongoose.Promise = global.Promise;
 
 // MIDDLEWARE
 app.use(morgan('dev'));
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -40,6 +41,9 @@ app.use('/products', require('./api/routes/products'));
 
 // ORDERS ROUTES MIDDLEWARE
 app.use('/orders', require('./api/routes/orders'));
+
+// USERS ROUTES MIDDLEWARE
+app.use('/user', require('./api/routes/user'));
 
 // ERROR HANDLING MIDDLEWARE
 /* Will reach this code only if there is no matching route that was requested */
