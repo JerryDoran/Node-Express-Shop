@@ -3,6 +3,7 @@ const router = express.Router();
 const Product = require('../models/product');
 const mongoose = require('mongoose');
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth');
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -74,7 +75,7 @@ router.get('/', (req, res, next) => {
 });
 
 // THIS ROUTE '/' IMPLIES '/PRODUCTS'
-router.post('/', upload.single('productImage'), (req, res, next) => {
+router.post('/', checkAuth, upload.single('productImage'), (req, res, next) => {
   // Create new instance of the Product Model
   const product = new Product({
     // This will create a new Id for the record to be stored on Mongo
@@ -103,10 +104,11 @@ router.post('/', upload.single('productImage'), (req, res, next) => {
         }
       });
     })
-    .catch(err => console.log(err));
-  res.status(500).json({
-    error: err
-  });
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
 });
 
 router.get('/:productId', (req, res, next) => {
@@ -148,7 +150,7 @@ router.get('/:productId', (req, res, next) => {
     });
 });
 
-router.patch('/:productId', (req, res, next) => {
+router.patch('/:productId', checkAuth, (req, res, next) => {
   const id = req.params.productId;
   const updateOps = {};
   for (const ops of req.body) {
@@ -183,7 +185,7 @@ router.patch('/:productId', (req, res, next) => {
   // });
 });
 
-router.delete('/:productId', (req, res, next) => {
+router.delete('/:productId', checkAuth, (req, res, next) => {
   const id = req.params.productId;
   Product.deleteOne({ _id: id })
     .exec()

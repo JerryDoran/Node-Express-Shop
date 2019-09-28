@@ -4,11 +4,12 @@ const mongoose = require('mongoose');
 
 const Order = require('../models/order');
 const Product = require('../models/product');
+const checkAuth = require('../middleware/check-auth');
 
 // SET UP THE ORDERS ROUTES
 
 // Handling incoming GET requests to /orders
-router.get('/', (req, res, next) => {
+router.get('/', checkAuth, (req, res, next) => {
   Order.find()
     .select('product quantity _id')
 
@@ -39,7 +40,7 @@ router.get('/', (req, res, next) => {
 });
 
 // Handling incoming POST requests to /orders
-router.post('/', (req, res, next) => {
+router.post('/', checkAuth, (req, res, next) => {
   // Validation for creating orders using products that we do not have in the database
   Product.findById(req.body.productId)
     .then(product => {
@@ -86,7 +87,7 @@ router.post('/', (req, res, next) => {
 });
 
 // Handling incoming GET requests to /orders/? with a specific id targeted
-router.get('/:orderId', (req, res, next) => {
+router.get('/:orderId', checkAuth, (req, res, next) => {
   Order.findById(req.params.orderId)
     .populate('product')
     .exec()
@@ -123,7 +124,7 @@ router.get('/:orderId', (req, res, next) => {
   // }
 });
 
-router.delete('/:orderId', (req, res, next) => {
+router.delete('/:orderId', checkAuth, (req, res, next) => {
   Order.deleteOne({ _id: req.params.orderId })
     .exec()
     .then(result => {
