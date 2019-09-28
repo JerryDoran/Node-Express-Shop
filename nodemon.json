@@ -1,5 +1,6 @@
 {
   "env": {
-    "MONGO_PWD": "Carmel101"
+    "MONGO_PWD": "Carmel101",
+    "JWT_KEY": "mamasgotadonkey"
   }
 }
